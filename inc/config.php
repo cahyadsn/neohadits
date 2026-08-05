@@ -27,10 +27,31 @@ $app_name='NeoHadits!';
 $keywords='kumpulan, hadits, bukhari, neo, islam, cahyadsn';
 $limit=10;
 $offset=0;
+//-- Load .env configuration
+if (file_exists(dirname(__DIR__) . '/.env')) {
+    $lines = file(dirname(__DIR__) . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) {
+            continue;
+        }
+        $parts = explode('=', $line, 2);
+        if (count($parts) === 2) {
+            $key = trim($parts[0]);
+            $val = trim($parts[1]);
+            if (preg_match('/^([\'"])(.*)\1$/', $val, $matches)) {
+                $val = $matches[2];
+            }
+            putenv("$key=$val");
+            $_ENV[$key] = $val;
+            $_SERVER[$key] = $val;
+        }
+    }
+}
+
 //-- database configuration
-$dbhost='localhost';
-$dbuser='root';
-$dbpass='password';
-$dbname='neohadits';
+$dbhost = getenv('DB_HOST') ?: 'localhost';
+$dbuser = getenv('DB_USER') ?: 'root';
+$dbpass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
+$dbname = getenv('DB_NAME') ?: 'neo_hadits';
 //-- database connection
 $db=new mysqli($dbhost,$dbuser,$dbpass,$dbname);

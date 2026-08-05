@@ -33,8 +33,6 @@ neohadits/
 │   └── font-awesome.min.css   # Icon framework
 ├── db/
 │   ├── ddl_neohadist.sql      # Schema definitions (CREATE TABLE statements)
-│   ├── neohadits.v1.sql       # Full dump including schemas and raw dataset
-│   ├── neohadits.v1.zip       # Compressed full sql database dump
 │   └── *.sql                  # Individual datasets for tables (data-only inserts)
 ├── fonts/                     # Local asset font-face resources
 ├── img/                       # UI graphic assets and preload svg indicator
@@ -47,7 +45,6 @@ neohadits/
 ├── .env                       # Local environment configurations (git-ignored)
 ├── .gitignore                 # Exclusions configuration file
 ├── index.php                  # Client application entry point
-├── GEMINI.md                  # Project overview documentation
 └── README.md                  # Detailed README manual
 ```
 
@@ -58,6 +55,7 @@ neohadits/
 The project separates the raw relational structure from the database contents:
 - **Core Schema**: [**`db/ddl_neohadist.sql`**](/db/ddl_neohadist.sql) contains the table definitions, relationships, and structure layout.
 - **Split Table Datasets**: The `db/` folder contains individual table data inserts (e.g. [`db/biografi_imam.sql`](/db/biografi_imam.sql), [`db/tema_bukhari.sql`](/db/tema_bukhari.sql), etc.) stripped of schemas for modular imports.
+- **Full Database Dump**: The git-ignored [`src/neohadits.v1.zip`](/src/neohadits.v1.zip) contains the compressed full database dump (`neohadits.v1.sql`), including both schema definitions and the complete dataset.
 
 ### Initializing the Database
 1. Connect to your local MySQL instance.
@@ -69,9 +67,10 @@ The project separates the raw relational structure from the database contents:
    ```bash
    mysql -u root -p neo_hadits < db/ddl_neohadist.sql
    ```
-4. Populate table data using the individual sql logs or import the full consolidated dump:
+4. Populate table data using the individual sql logs, or extract and import the full consolidated dump:
    ```bash
-   mysql -u root -p neo_hadits < db/neohadits.v1.sql
+   # Extract neohadits.v1.sql from src/neohadits.v1.zip first, then run:
+   mysql -u root -p neo_hadits < neohadits.v1.sql
    ```
 
 ---

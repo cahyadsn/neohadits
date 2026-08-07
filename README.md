@@ -39,11 +39,14 @@ neohadits/
 ├── inc/
 │   ├── config.php             # System constants, DB connector, and .env parser
 │   ├── neohadits_ajax.php     # Server-side AJAX endpoint for Hadith searching
-│   └── change.color.php       # Dynamic session state writer for theme colors
+│   └── change_color.php       # Dynamic session state writer for theme colors
 ├── js/
 │   └── neohadits_js.php       # Client-side Vanilla JS controllers and handlers
 ├── .env                       # Local environment configurations (git-ignored)
+├── .env.example               # Template for environment configurations
 ├── .gitignore                 # Exclusions configuration file
+├── GEMINI.md                  # Project instructions and reference doc
+├── LICENSE                    # Software license details
 ├── index.php                  # Client application entry point
 └── README.md                  # Detailed README manual
 ```

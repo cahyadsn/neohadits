@@ -2,28 +2,29 @@
 /*
 BISMILLAAHIRRAHMAANIRRAHIIM - In the Name of Allah, Most Gracious, Most Merciful
 ================================================================================
-filename : index.php
-purpose  :
-create   : 2018/05/22
-last edit: 190830,180525
-author   : cahya dsn
+FILENAME     : index.php
+purpose      : NeoHadist main page
+AUTHOR       : CAHYA DSN
+CREATED DATE : 2018-05-22 09:05:29
+UPDATED DATE : 2026-08-07 10:27:39
+DEMO SITE    : 
+SOURCE CODE  : https://github.com/cahyadsn/neohadist
 ================================================================================
 This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later version.
+terms of the MIT License.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-copyright (c) 2018-2019 by cahya dsn; cahyadsn@gmail.com
+See the MIT License for more details
+
+copyright (c) 2018-2026 by cahya dsn; cahyadsn@gmail.com
 ================================================================================*/
-session_start();
-$c=isset($_SESSION['c'])?$_SESSION['c']:(isset($_GET['c'])?$_GET['c']:'indigo');
-define("_AUTHOR","cahyadsn");
-$_SESSION['c']=$c;
-$_SESSION['author']='cahyadsn';
-$_SESSION['ver']=sha1(rand());
 include 'inc/config.php';
 ?>
 <!DOCTYPE html>
@@ -66,7 +67,7 @@ include 'inc/config.php';
     </head>
     <body>
     <header class="navbar">
-        <a href="index.php" class="brand"># <span>NeoHadits</span></a>
+        <a href="index.php" class="brand"># <span>NeoHadits v<?php echo $version;?></span></a>
         <div class="nav-links">
             <div class="dropdown">
                 <button class="nav-item">Menu <i class="fa fa-caret-down"></i></button>
@@ -78,7 +79,8 @@ include 'inc/config.php';
             </div>
             <div class="dropdown">
                 <button class="theme-pill">Theme <span class="theme-pill-dot"></span> <i class="fa fa-caret-down"></i></button>
-                <div class="dropdown-content theme-presets">
+                <div class="dropdown-content">
+					<div class="theme-presets">
                     <?php
                     $colors_hex = array(
                         "black" => "#374151",
@@ -101,6 +103,7 @@ include 'inc/config.php';
                         echo "<a href='#' class='theme-preset-btn color{$activeClass}' data-value='{$clr}' style='background: {$hex}' title='{$clr}'></a>";
                     }
                     ?>
+					</div>
                 </div>
             </div>
         </div>
@@ -141,77 +144,6 @@ include 'inc/config.php';
                 ?>
             </div>
         </div>
-
-        <!-- Search Card -->
-        <div class="glass-card cari">
-            <div class="card-header">
-                <h3>Pencarian Kata</h3>
-            </div>
-            <form>
-                <div class="form-group">
-                    <label class="form-label" for="kitab">Pilih Kitab</label>
-                    <select name="kitab" id="kitab" class="form-select slcKitab">
-                        <option value="">-- Semua --</option>
-                        <?php
-                        $result=$db->query("SELECT id_kitab,kitab_indonesia FROM datakitab_bukhari ORDER BY id_kitab");
-                        while ($data=$result->fetch_object()){
-                            echo "<option value='{$data->id_kitab}'>Kitab {$data->id_kitab} ".ucwords($data->kitab_indonesia).'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="bab">Pilih Bab</label>
-                    <select name="bab" id="bab" class="form-select slcBab">
-                        <option value="">-- Semua --</option>
-                        <?php
-                        $result=$db->query("SELECT id_bab,bab_indonesia FROM databab_bukhari WHERE id_kitab=1 ORDER BY id_bab");
-                        while ($data=$result->fetch_object()){
-                            echo '<option value="'.$data->id_bab.'">'.ucwords($data->bab_indonesia).'</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="query">Cari Kata</label>
-                    <input type='text' class='form-input' id='query' placeholder="Ketik kata kunci pencarian...">
-                </div>
-                <button class="btn" id='btnCari'><i class="fa fa-search" style="margin-right: 0.5rem;"></i> Cari</button>
-            </form>
-        </div>
-
-        <!-- Results Card -->
-        <div class="glass-card hasil">
-            <div class="card-header">
-                <h3>Hasil Pencarian</h3>
-            </div>
-            <div id="list_box">
-            </div>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="id01" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Sign In</h4>
-                <button onclick="document.getElementById('id01').style.display='none'" class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Username</label>
-                    <input class="form-input" type="text" placeholder="Enter Username" name="usrname" required autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <input class="form-input" type="password" placeholder="Enter Password" name="psw" required autocomplete="off">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button onclick="document.getElementById('id01').style.display='none'" type="button" class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); width: auto;">Cancel</button>
-                <button class="btn" type="submit" style="width: auto;">Login</button>
-            </div>
-        </div>
     </div>
 
     <!-- Notice Modal -->
@@ -236,6 +168,61 @@ include 'inc/config.php';
             <div class="modal-body" style="text-align: center;">
                 <img src="img/preload.svg" alt="Loading..." style="width: 64px; height: 64px;">
             </div>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div id="cari_modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Pencarian Kata</h4>
+                <button onclick="document.getElementById('cari_modal').style.display='none'" class="modal-close">&times;</button>
+            </div>
+            <form>
+                <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+                    <div class="form-group">
+                        <label class="form-label" for="kitab">Pilih Kitab</label>
+                        <select name="kitab" id="kitab" class="form-select slcKitab">
+                            <option value="">-- Semua --</option>
+                            <?php
+                            $result=$db->query("SELECT id_kitab,kitab_indonesia FROM datakitab_bukhari ORDER BY id_kitab");
+                            while ($data=$result->fetch_object()){
+                                echo "<option value='{$data->id_kitab}'>Kitab {$data->id_kitab} ".ucwords($data->kitab_indonesia).'</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bab">Pilih Bab</label>
+                        <select name="bab" id="bab" class="form-select slcBab">
+                            <option value="">-- Semua --</option>
+                            <?php
+                            $result=$db->query("SELECT id_bab,bab_indonesia FROM databab_bukhari WHERE id_kitab=1 ORDER BY id_bab");
+                            while ($data=$result->fetch_object()){
+                                echo '<option value="'.$data->id_bab.'">'.ucwords($data->bab_indonesia).'</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="query">Cari Kata</label>
+                        <input type='text' class='form-input' id='query' placeholder="Ketik kata kunci pencarian...">
+                    </div>
+                    
+                    <!-- Search Results inside modal body -->
+                    <div class="glass-card hasil" style="margin-top: 1.5rem; margin-bottom: 0; padding: 1.25rem;">
+                        <div class="card-header" style="padding-bottom: 0.5rem; margin-bottom: 0.75rem;">
+                            <h3 style="font-size: 0.95rem;">Hasil Pencarian</h3>
+                        </div>
+                        <div id="list_box" style="font-size: 0.95rem; line-height: 1.6; color: var(--text-primary);">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="document.getElementById('cari_modal').style.display='none'" type="button" class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); width: auto;">Batal</button>
+                    <button class="btn" id='btnCari' style="width: auto;"><i class="fa fa-search" style="margin-right: 0.5rem;"></i> Cari</button>
+                </div>
+            </form>
         </div>
     </div>
 

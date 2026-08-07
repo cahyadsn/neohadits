@@ -2,23 +2,29 @@
 /*
 BISMILLAAHIRRAHMAANIRRAHIIM - In the Name of Allah, Most Gracious, Most Merciful
 ================================================================================
-filename : inc/neohadits_ajax.php
-purpose  :
-create   : 2018/05/23
-last edit: 2018/05/24
-author   : cahya dsn
+FILENAME     : inc/neohadits_ajax.php
+purpose      : NeoHadist ajax call process
+AUTHOR       : CAHYA DSN
+CREATED DATE : 2018-05-22 09:05:29
+UPDATED DATE : 2026-08-07 09:13:22
+DEMO SITE    : 
+SOURCE CODE  : https://github.com/cahyadsn/neohadist
 ================================================================================
 This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later version.
+terms of the MIT License.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-copyright (c) 2018 by cahya dsn; cahyadsn@gmail.com
+See the MIT License for more details
+
+copyright (c) 2018-2026 by cahya dsn; cahyadsn@gmail.com
 ================================================================================*/
-session_start();
 include 'config.php';
 $r=array('status'=>false,'error'=>'an error occured');
 if(isset($_POST['n']) && !empty($_POST['n'])){

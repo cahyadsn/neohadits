@@ -294,6 +294,7 @@ h1, h2, h3, h4 {
 .modal-title {
     font-size: 1.15rem;
     font-weight: 700;
+	color: var(--accent-color);
 }
 
 .modal-close {
@@ -423,7 +424,7 @@ footer a {
 
 /* Theme presets container */
 .theme-presets {
-    display: none;
+    display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
     padding: 0.75rem;

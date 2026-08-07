@@ -2,29 +2,41 @@
 /*
 BISMILLAAHIRRAHMAANIRRAHIIM - In the Name of Allah, Most Gracious, Most Merciful
 ================================================================================
-filename : inc/config.php
-purpose  :
-create   : 2018/05/22
-last edit: 190830,180525
-author   : cahya dsn
+FILENAME     : inc/config.php
+PURPOSE      : NeoHadist configuration settings
+AUTHOR       : CAHYA DSN
+CREATED DATE : 2018-05-22 09:05:29
+UPDATED DATE : 2026-08-07 09:02:10
+DEMO SITE    : 
+SOURCE CODE  : https://github.com/cahyadsn/neohadist
 ================================================================================
 This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later version.
+terms of the MIT License.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-copyright (c) 2018 by cahya dsn; cahyadsn@gmail.com
+See the MIT License for more details
+
+copyright (c) 2018-2026 by cahya dsn; cahyadsn@gmail.com
 ================================================================================*/
+session_start();
 //-- 
 define('_ISONLINE',false);
 //-- assets folder
 define('_ASSET','');
-$version='0.1';
 $app_name='NeoHadits!';
 $keywords='kumpulan, hadits, bukhari, neo, islam, cahyadsn';
+$c=isset($_SESSION['c'])?$_SESSION['c']:(isset($_GET['c'])?$_GET['c']:'indigo');
+define("_AUTHOR","cahyadsn");
+$_SESSION['c']=$c;
+$_SESSION['author']='cahyadsn';
+$_SESSION['ver']=sha1(rand());
 $limit=10;
 $offset=0;
 //-- Load .env configuration
@@ -50,8 +62,9 @@ if (file_exists(dirname(__DIR__) . '/.env')) {
 
 //-- database configuration
 $dbhost = getenv('DB_HOST') ?: 'localhost';
-$dbuser = getenv('DB_USER') ?: 'root';
+$dbuser = getenv('DB_USER') !== false ? getenv('DB_USER') : '';
 $dbpass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
 $dbname = getenv('DB_NAME') ?: 'neo_hadits';
+$version = getenv('APP_VER') ?: '1.0.0';
 //-- database connection
 $db=new mysqli($dbhost,$dbuser,$dbpass,$dbname);

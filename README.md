@@ -122,24 +122,33 @@ It maps parameters into `$_ENV` and `getenv()` functions and falls back to stand
 ## 🕒 Changelog
 All notable changes to the **NeoHadits** codebase are documented below:
 
-[1.0.0] - 2026-08-05
-### Refactored UI & UX (Modern Glassmorphic Look)
+### [1.0.1] - 2026-08-07
+
+#### Search Experience (Modal Integration)
+- **Search Panel Refactored to Modal**: Converted the static 'Pencarian Kata' (Word Search) form card into a dynamic overlay modal (`#cari_modal`), triggered from the navigation bar.
+- **Merged Search Results**: Relocated the 'Hasil Pencarian' (Search Results) panel directly into the search modal with an overflow-scrolling container, keeping the search context self-contained.
+- **Dismiss on Select**: Set the search modal to automatically close once a specific Hadith is clicked, displaying the selected Hadith immediately on the main card.
+- **Dismiss on Outside Click**: Added a listener that dismisses active modals when clicking outside the modal container.
+
+### [1.0.0] - 2026-08-05
+
+#### Refactored UI & UX (Modern Glassmorphic Look)
 - **Glassmorphism Redesign**: Replaced the legacy `w3.css` framework with a custom responsive stylesheet [`css/neohadits.css`](/css/neohadits.css), introducing glass backdrop blurs, glowing card outlines, and modernized forms.
 - **Dynamic Theme Accents**: Rebuilt the theme selection engine. Preset theme colors now directly target CSS variables (`--accent-color`), eliminating document re-requests. The active theme preset now displays a dynamic highlight state.
 - **Dropdown Pill button**: Replaced the standard menu with a rounded pill button featuring an active theme-dot showing the selected color glow.
 - **Click Toggling**: Transitioned the dropdown menus from hover-triggers to standard click-toggles that dismiss when clicking outside or toggling other active dropdowns.
 - **Simplified Nav Header**: Removed the login button to clean up user navigation.
 
-### Architecture & Scripting (Zero-Dependency Vanilla JS)
+#### Architecture & Scripting (Zero-Dependency Vanilla JS)
 - **Vanilla JS Migration**: Refactored the core logic script [`js/neohadits_js.php`](/js/neohadits_js.php) using modern ES6+ features, standard DOM APIs, and the native `fetch` API.
 - **Cleaned Dependencies**: Completely deleted the unused `js/jquery.min.js`, `css/w3.css`, and associated color theme stylesheets from the codebase.
 - **HTML Cleanup**: Resolved nested `<select>` tagging syntax bugs inside index templates.
 
-### Configuration & Security
+#### Configuration & Security
 - **Credentials Isolation**: Implemented a local [`.env`](/.env) loader inside config files to separate credentials from version-controlled logic.
 - **Git Exclusions**: Added a [`.gitignore`](/.gitignore) file to prevent accidental pushes of sensitive parameters.
 
-### Database & DDL Splits
+#### Database & DDL Splits
 - **Schema Separation**: Extracted table schemas from dataset records into a standalone DDL dump file [`db/ddl_neohadist.sql`](/db/ddl_neohadist.sql).
 - **Split Dataset Files**: Divided table dumps into individual data-only INSERT SQL logs under the [`db/`](/db) directory, stripping database schemas from dataset inserts.
 

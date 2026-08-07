@@ -45,7 +45,6 @@ neohadits/
 ├── .env                       # Local environment configurations (git-ignored)
 ├── .env.example               # Template for environment configurations
 ├── .gitignore                 # Exclusions configuration file
-├── GEMINI.md                  # Project instructions and reference doc
 ├── LICENSE                    # Software license details
 ├── index.php                  # Client application entry point
 └── README.md                  # Detailed README manual

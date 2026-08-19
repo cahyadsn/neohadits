@@ -124,6 +124,12 @@ It maps parameters into `$_ENV` and `getenv()` functions and falls back to stand
 ## 🕒 Changelog
 All notable changes to the **NeoHadits** codebase are documented below:
 
+### [1.0.2] - 2026-08-19
+
+#### Database Source & Schema Refactoring
+- **Separated Schema and Data**: Stripped all database insert statements from [`db/ddl_neohadist.sql`](file:///D:/laragon/repo/dev/neohadits/db/ddl_neohadist.sql) to maintain a clean schema-only definition layout.
+- **Updated Dataset Files**: Refreshed individual data insert files in the [`db/`](file:///D:/laragon/repo/dev/neohadits/db) directory (e.g. biografi, bab, kitab, perawi, sanad, and tema data).
+
 ### [1.0.1] - 2026-08-07
 
 #### Search Experience (Modal Integration)

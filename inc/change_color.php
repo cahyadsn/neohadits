@@ -25,7 +25,10 @@ See the MIT License for more details
 
 copyright (c) 2018-2026 by cahya dsn; cahyadsn@gmail.com
 ================================================================================*/
+session_start();
 if(isset($_POST['color'])){
-    if($_SESSION===false) session_start();
-    $_SESSION['c']=$_POST['color'];
+    $allowed_colors = ["black", "brown", "pink", "orange", "amber", "lime", "green", "teal", "purple", "indigo", "blue", "cyan"];
+    if (in_array($_POST['color'], $allowed_colors, true)) {
+        $_SESSION['c'] = $_POST['color'];
+    }
 }

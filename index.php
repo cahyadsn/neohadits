@@ -26,11 +26,16 @@ See the MIT License for more details
 copyright (c) 2018-2026 by cahya dsn; cahyadsn@gmail.com
 ================================================================================*/
 include 'inc/config.php';
+// Validate theme color
+$allowed_colors = ["black", "brown", "pink", "orange", "amber", "lime", "green", "teal", "purple", "indigo", "blue", "cyan"];
+if (!in_array($c, $allowed_colors, true)) {
+    $c = 'indigo';
+}
 ?>
 <!DOCTYPE html>
 <html lang='en'>
     <head>
-    <title><?php echo "{$app_name} v {$version}";?></title>
+    <title><?php echo htmlspecialchars("{$app_name} v {$version}", ENT_QUOTES, 'UTF-8');?></title>
     <meta charset="utf-8" />
     <meta http-equiv="expires" content="<?php echo date('r');?>" />
     <meta http-equiv="pragma" content="no-cache" />
@@ -39,8 +44,8 @@ include 'inc/config.php';
     <meta http-equiv="content-language" content="en" />
     <meta name="author" content="Cahya DSN" />
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-    <meta name="keywords" content="<?php echo $keywords;?>" />
-    <meta name="description" content="<?php echo "{$app_name} v {$version}";?> created by cahya dsn, Kumpulan Hadits, dalam bahasa pemrograman PHP dan database MySQL" />
+    <meta name="keywords" content="<?php echo htmlspecialchars($keywords, ENT_QUOTES, 'UTF-8');?>" />
+    <meta name="description" content="<?php echo htmlspecialchars("{$app_name} v {$version}", ENT_QUOTES, 'UTF-8');?> created by cahya dsn, Kumpulan Hadits, dalam bahasa pemrograman PHP dan database MySQL" />
     <meta name="robots" content="index, follow" />
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/font-awesome.min.css">
@@ -60,7 +65,7 @@ include 'inc/config.php';
             blue: '#3b82f6',
             cyan: '#06b6d4'
         };
-        const initialColor = '<?php echo $c; ?>';
+        const initialColor = '<?php echo htmlspecialchars($c, ENT_QUOTES, 'UTF-8'); ?>';
         document.documentElement.style.setProperty('--accent-color', colors[initialColor] || '#6366f1');
         document.documentElement.style.setProperty('--accent-glow', (colors[initialColor] || '#6366f1') + '26');
     </script>
@@ -125,21 +130,20 @@ include 'inc/config.php';
                 <?php
                 $pattern=array('[',']');
                 $replacer=array('<b>','</b>');
-                $sql="SELECT a.no_hdt,d.kitab_indonesia, c.bab_indonesia, a.tema_indonesia as isi_indonesia, a.tema_arab as isi_arab
+                $sql="SELECT a.no_hdt, d.kitab_indonesia, c.bab_indonesia, a.tema_indonesia as isi_indonesia, a.tema_arab as isi_arab
                     FROM
                     tema_bukhari a
-                    JOIN tema_bukhari b USING(no_hdt)
-                    JOIN databab_bukhari c ON (c.id_bab=b.id_bab AND c.id_kitab=b.id_kitab)
-                    JOIN datakitab_bukhari d ON b.id_kitab=d.id_kitab
+                    JOIN databab_bukhari c ON (c.id_bab=a.id_bab AND c.id_kitab=a.id_kitab)
+                    JOIN datakitab_bukhari d ON a.id_kitab=d.id_kitab
                     WHERE a.no_hdt=1
                     ";
                 $result=$db->query($sql);
                 if ($result && $r=$result->fetch_object()) {
-                    echo "<div class='hadits-meta' id='kitab_hdt'>KITAB : {$r->kitab_indonesia}</div>";
-                    echo "<div class='hadits-meta' id='bab_hdt'>BAB : {$r->bab_indonesia}</div>";
-                    echo "<div class='hadits-meta' id='no_hdt' style='font-weight:600;color:var(--accent-color)'>Hadits No. [{$r->no_hdt}]</div>";
-                    echo "<div class='hadits-arab' id='isi_arab'>{$r->isi_arab}</div>";
-                    echo "<div class='hadits-indo' id='isi_indonesia'>".str_replace($pattern,$replacer,$r->isi_indonesia)."</div>";
+                    echo "<div class='hadits-meta' id='kitab_hdt'>KITAB : " . htmlspecialchars($r->kitab_indonesia, ENT_QUOTES, 'UTF-8') . "</div>";
+                    echo "<div class='hadits-meta' id='bab_hdt'>BAB : " . htmlspecialchars($r->bab_indonesia, ENT_QUOTES, 'UTF-8') . "</div>";
+                    echo "<div class='hadits-meta' id='no_hdt' style='font-weight:600;color:var(--accent-color)'>Hadits No. [" . (int)$r->no_hdt . "]</div>";
+                    echo "<div class='hadits-arab' id='isi_arab'>" . htmlspecialchars($r->isi_arab, ENT_QUOTES, 'UTF-8') . "</div>";
+                    echo "<div class='hadits-indo' id='isi_indonesia'>" . str_replace($pattern,$replacer,htmlspecialchars($r->isi_indonesia, ENT_QUOTES, 'UTF-8')) . "</div>";
                 }
                 ?>
             </div>
@@ -187,7 +191,7 @@ include 'inc/config.php';
                             <?php
                             $result=$db->query("SELECT id_kitab,kitab_indonesia FROM datakitab_bukhari ORDER BY id_kitab");
                             while ($data=$result->fetch_object()){
-                                echo "<option value='{$data->id_kitab}'>Kitab {$data->id_kitab} ".ucwords($data->kitab_indonesia).'</option>';
+                                echo "<option value='" . (int)$data->id_kitab . "'>Kitab " . (int)$data->id_kitab . " " . htmlspecialchars(ucwords($data->kitab_indonesia), ENT_QUOTES, 'UTF-8') . '</option>';
                             }
                             ?>
                         </select>
@@ -199,7 +203,7 @@ include 'inc/config.php';
                             <?php
                             $result=$db->query("SELECT id_bab,bab_indonesia FROM databab_bukhari WHERE id_kitab=1 ORDER BY id_bab");
                             while ($data=$result->fetch_object()){
-                                echo '<option value="'.$data->id_bab.'">'.ucwords($data->bab_indonesia).'</option>';
+                                echo '<option value="' . (int)$data->id_bab . '">' . htmlspecialchars(ucwords($data->bab_indonesia), ENT_QUOTES, 'UTF-8') . '</option>';
                             }
                             ?>
                         </select>

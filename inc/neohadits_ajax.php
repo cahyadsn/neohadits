@@ -28,53 +28,96 @@ copyright (c) 2018-2026 by cahya dsn; cahyadsn@gmail.com
 include 'config.php';
 $r=array('status'=>false,'error'=>'an error occured');
 if(isset($_POST['n']) && !empty($_POST['n'])){
-	$sql="SELECT a.no_hdt,d.kitab_indonesia, c.bab_indonesia, a.isi_indonesia, a.isi_arab
+	$n = (int)$_POST['n'];
+	$sql="SELECT a.no_hdt, d.kitab_indonesia, c.bab_indonesia, a.tema_indonesia AS isi_indonesia, a.tema_arab AS isi_arab
 		  FROM
-		  hadits_bukhari a
-		  JOIN tema_bukhari b USING(no_hdt)
-		  JOIN databab_bukhari c ON (c.id_bab=b.id_bab AND c.id_kitab=b.id_kitab)
-		  JOIN datakitab_bukhari d ON b.id_kitab=d.id_kitab
-		  WHERE a.no_hdt={$_POST['n']}";
-	$result=$db->query($sql);
-	if(!empty($result)){
-		$row=$result->fetch_object();
-		$pattern=array('[',']');
-		$replacer=array('<b>','</b>');
-		$data=array(
-			'no'=>$row->no_hdt,
-			'kitab'=>$row->kitab_indonesia,
-			'bab'=>$row->bab_indonesia,
-			'isi'=>str_replace($pattern,$replacer,$row->isi_indonesia),
-			'arab'=>$row->isi_arab
-		);
-		$r=array('status'=>true,'data'=>$data);
-	}else{
-		$r=array('status'=>false,'error'=>'data not found');
+		  tema_bukhari a
+		  JOIN databab_bukhari c ON (c.id_bab=a.id_bab AND c.id_kitab=a.id_kitab)
+		  JOIN datakitab_bukhari d ON a.id_kitab=d.id_kitab
+		  WHERE a.no_hdt=?";
+	if ($stmt = $db->prepare($sql)) {
+		$stmt->bind_param("i", $n);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if($result && $row=$result->fetch_object()){
+			$pattern=array('[',']');
+			$replacer=array('<b>','</b>');
+			$data=array(
+				'no'=>$row->no_hdt,
+				'kitab'=>htmlspecialchars($row->kitab_indonesia, ENT_QUOTES, 'UTF-8'),
+				'bab'=>htmlspecialchars($row->bab_indonesia, ENT_QUOTES, 'UTF-8'),
+				'isi'=>str_replace($pattern,$replacer,htmlspecialchars($row->isi_indonesia, ENT_QUOTES, 'UTF-8')),
+				'arab'=>htmlspecialchars($row->isi_arab, ENT_QUOTES, 'UTF-8')
+			);
+			$r=array('status'=>true,'data'=>$data);
+		}else{
+			$r=array('status'=>false,'error'=>'data not found');
+		}
+		$stmt->close();
+	} else {
+		$r=array('status'=>false,'error'=>'query preparation failed');
 	}
 }else{
-	$sql="SELECT b.no_hdt,d.kitab_indonesia, c.bab_indonesia, SUBSTRING(b.tema_indonesia,1,100) AS isi
+	$sql="SELECT b.no_hdt, d.kitab_indonesia, c.bab_indonesia, SUBSTRING(b.tema_indonesia,1,100) AS isi
 		  FROM
 		  tema_bukhari b
 		  JOIN databab_bukhari c ON (c.id_bab=b.id_bab AND c.id_kitab=b.id_kitab)
 		  JOIN datakitab_bukhari d ON b.id_kitab=d.id_kitab
-		  WHERE 1=1 "
-		 .((isset($_POST['b']) && !empty($_POST['b']))?"AND c.id_bab={$_POST['b']} ":((isset($_POST['k']) && !empty($_POST['k']))?"AND d.id_kitab={$_POST['k']} ":''))
-		 .((isset($_POST['q']) && !empty($_POST['q']))?"AND b.tema_indonesia LIKE '%{$_POST['q']}%' ":"")
-		 ."LIMIT {$offset},{$limit}";
-	$result=$db->query($sql);
-	if(!empty($result)){
-		$data=array();
-		foreach($result as $row){
-			$data[]=array($row['no_hdt'],$row['isi']);
+		  WHERE 1=1";
+	
+	$types = "";
+	$params = [];
+	
+	if(isset($_POST['b']) && !empty($_POST['b'])){
+		$sql .= " AND c.id_bab = ?";
+		$types .= "i";
+		$params[] = (int)$_POST['b'];
+	}elseif(isset($_POST['k']) && !empty($_POST['k'])){
+		$sql .= " AND d.id_kitab = ?";
+		$types .= "i";
+		$params[] = (int)$_POST['k'];
+	}
+	
+	if(isset($_POST['q']) && !empty($_POST['q'])){
+		$sql .= " AND b.tema_indonesia LIKE ?";
+		$types .= "s";
+		$params[] = "%" . $_POST['q'] . "%";
+	}
+	
+	$sql .= " LIMIT ?, ?";
+	$types .= "ii";
+	$params[] = $offset;
+	$params[] = $limit;
+	
+	if ($stmt = $db->prepare($sql)) {
+		if (!empty($params)) {
+			$stmt->bind_param($types, ...$params);
 		}
-		if(isset($_POST['k']) && !empty($_POST['k'])){
-			$list='';
-			$sql="SELECT id_bab,bab_indonesia FROM databab_bukhari WHERE id_kitab={$_POST['k']} ORDER BY id_bab";
-			$result=$db->query($sql);
-			while ($d=$result->fetch_object()){
-				$list.="<option value='{$d->id_bab}'>".ucwords(str_replace('"','&quot;',$d->bab_indonesia))."</option>";
+		$stmt->execute();
+		$result = $stmt->get_result();
+		
+		$data=array();
+		if ($result) {
+			while ($row = $result->fetch_assoc()) {
+				$data[]=array($row['no_hdt'], htmlspecialchars($row['isi'], ENT_QUOTES, 'UTF-8'));
 			}
 		}
+		
+		$list='';
+		if(isset($_POST['k']) && !empty($_POST['k'])){
+			$k = (int)$_POST['k'];
+			$sql_list="SELECT id_bab,bab_indonesia FROM databab_bukhari WHERE id_kitab=? ORDER BY id_bab";
+			if ($stmt_list = $db->prepare($sql_list)) {
+				$stmt_list->bind_param("i", $k);
+				$stmt_list->execute();
+				$result_list = $stmt_list->get_result();
+				while ($d=$result_list->fetch_object()){
+					$list.="<option value='".(int)$d->id_bab."'>".htmlspecialchars(ucwords($d->bab_indonesia), ENT_QUOTES, 'UTF-8')."</option>";
+				}
+				$stmt_list->close();
+			}
+		}
+		
 		if(!empty($data)){
 			if(!empty($list)){
 				$r=array('status'=>true,'data'=>$data,'list'=>$list);
@@ -84,9 +127,10 @@ if(isset($_POST['n']) && !empty($_POST['n'])){
 		}else{
 			$r=array('status'=>false,'error'=>'data not found');
 		}
-	}else{
-		$r=array('status'=>false,'error'=>'data not found');
+		$stmt->close();
+	} else {
+		$r=array('status'=>false,'error'=>'query preparation failed');
 	}
 }
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 echo json_encode($r);

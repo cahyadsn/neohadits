@@ -1,0 +1,122 @@
+// DBML representation of the NeoHadits database schema
+// Generated from db/ddl_neohadist.sql
+
+Project NeoHadits {
+  database_type: 'MySQL'
+  Note: 'Entity Relationship Diagram for NeoHadits - Hadith Collection Portal'
+}
+
+Table biografi_imam {
+  bio_id int(10) [pk, increment, not null, note: 'Unique identifier for the Imam']
+  bio_imam varchar(255) [default: null, note: 'Name of the Imam']
+  bio_imam_full varchar(255) [default: null, note: 'Full name/title of the Imam']
+  bio_content text [note: 'Biography content']
+}
+
+Table datakitab_bukhari {
+  id_kitab int(11) [pk, not null, default: 0, note: 'Unique identifier for the book (Kitab)']
+  kitab_indonesia varchar(255) [default: null, note: 'Book name in Indonesian']
+  kitab_arab varchar(255) [default: null, note: 'Book name in Arabic']
+}
+
+Table databab_bukhari {
+  id_bab int(11) [pk, not null, default: 0, note: 'Unique identifier for the chapter (Bab)']
+  id_kitab int(11) [default: null, note: 'Reference to datakitab_bukhari']
+  bab_indonesia text [note: 'Chapter description in Indonesian']
+  bab_arab text [note: 'Chapter description in Arabic']
+
+  indexes {
+    id_kitab [name: "id_kitab"]
+  }
+}
+
+Table hadits_status {
+  id_status int [pk, not null, note: 'Unique identifier for Hadith status']
+  status varchar(255) [note: 'Status description']
+}
+
+Table tema_bukhari {
+  no_hdt int(11) [pk, not null, default: 0, note: 'Hadith number, also serves as primary key']
+  tema_indonesia text [note: 'Hadith content/topic translation in Indonesian']
+  tema_arab text [note: 'Hadith text in Arabic']
+  id_kitab int(11) [default: null, note: 'Reference to the book (Kitab)']
+  id_bab int(11) [default: null, note: 'Reference to the chapter (Bab)']
+
+  indexes {
+    (id_kitab, id_bab) [name: "id_kitab_id_bab"]
+  }
+}
+
+Table perawi_kalangan {
+  id_kalangan int [pk, not null, note: 'Unique identifier for narrator generation/category']
+  kalangan varchar(255) [note: 'Generation/category name']
+}
+
+Table perawi_daftar {
+  kode_rawi int(8) [pk, not null, note: 'Unique identifier for the narrator (Rawi)']
+  nama varchar(80) [not null, note: 'Name of the narrator']
+  quality int(6) [not null, note: 'Narrator quality classification code']
+  kalangan varchar(50) [not null, note: 'Generation/category of narrator']
+  nasab varchar(40) [not null, note: 'Lineage/nasab']
+  kuniyah varchar(40) [not null, note: 'Kuniyah/honorific name']
+  laqob varchar(40) [not null, note: 'Title/laqob']
+  negeri_hidup varchar(30) [not null, note: 'City/region where they lived']
+  negeri_wafat varchar(30) [not null, note: 'City/region where they passed away']
+  tahun_wafat varchar(8) [not null, note: 'Year of death']
+  bukhari int(4) [not null, note: 'Count or presence in Sahih Bukhari']
+  muslim int(4) [not null, note: 'Count or presence in Sahih Muslim']
+  abudaud int(4) [not null, note: 'Count or presence in Sunan Abu Daud']
+  tirmidzi int(4) [not null, note: 'Count or presence in Sunan Tirmidzi']
+  nasai int(4) [not null, note: 'Count or presence in Sunan Nasa\'i']
+  ibnumajah int(4) [not null, note: 'Count or presence in Sunan Ibn Majah']
+  ahmad int(4) [not null, note: 'Count or presence in Musnad Ahmad']
+  malik int(4) [not null, note: 'Count or presence in Muwatta Malik']
+  darimi int(4) [not null, note: 'Count or presence in Sunan al-Darimi']
+}
+
+Table perawi_bukhari {
+  no_urut int(6) [not null, note: 'Sequence order of narrator in the sanad chain']
+  no_hdt int(6) [not null, note: 'Hadith number']
+  kode_rawi int(6) [not null, note: 'Reference to the narrator in perawi_daftar']
+
+  indexes {
+    (no_urut, no_hdt) [pk]
+  }
+}
+
+Table sanad_skema {
+  id_skema int(2) [pk, not null, note: 'Unique identifier for sanad schema']
+  skema varchar(30) [note: 'Schema name']
+}
+
+Table sanad_kedudukan {
+  id_kedudukan int(2) [pk, not null, note: 'Unique identifier for sanad position']
+  kedudukan varchar(40) [note: 'Position name']
+}
+
+Table sanad_bukhari {
+  no_hdt int(6) [not null, note: 'Hadith number']
+  no_urut int(6) [not null, note: 'Sequence order']
+  j1 int(6) [not null, note: 'Narrator 1 at level 1']
+  j2 int(6) [not null, note: 'Narrator 2 at level 2']
+  j3 int(6) [not null, note: 'Narrator 3 at level 3']
+  j4 int(6) [not null, note: 'Narrator 4 at level 4']
+  j5 int(6) [not null, note: 'Narrator 5 at level 5']
+  j6 int(6) [not null, note: 'Narrator 6 at level 6']
+  j7 int(6) [not null, note: 'Narrator 7 at level 7']
+  j8 int(6) [not null, note: 'Narrator 8 at level 8']
+  j9 int(6) [not null, note: 'Narrator 9 at level 9']
+  j10 int(6) [not null, note: 'Narrator 10 at level 10']
+  id_skema int(2) [not null, note: 'Reference to sanad_skema']
+  id_kedudukan int(2) [not null, note: 'Reference to sanad_kedudukan']
+}
+
+// Relationships
+Ref: databab_bukhari.id_kitab > datakitab_bukhari.id_kitab
+Ref: tema_bukhari.id_kitab > datakitab_bukhari.id_kitab
+Ref: tema_bukhari.id_bab > databab_bukhari.id_bab
+Ref: perawi_bukhari.kode_rawi > perawi_daftar.kode_rawi
+Ref: perawi_bukhari.no_hdt > tema_bukhari.no_hdt
+Ref: sanad_bukhari.no_hdt > tema_bukhari.no_hdt
+Ref: sanad_bukhari.id_skema > sanad_skema.id_skema
+Ref: sanad_bukhari.id_kedudukan > sanad_kedudukan.id_kedudukan

@@ -11,7 +11,7 @@ CREATE TABLE `biografi_imam` (
   `bio_imam_full` varchar(255) CHARACTER SET utf32 DEFAULT NULL,
   `bio_content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci,
   PRIMARY KEY (`bio_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `databab_bukhari`;
 CREATE TABLE `databab_bukhari` (
@@ -21,7 +21,7 @@ CREATE TABLE `databab_bukhari` (
   `bab_arab` text,
   PRIMARY KEY (`id_bab`),
   KEY `id_kitab` (`id_kitab`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `datakitab_bukhari`;
 CREATE TABLE `datakitab_bukhari` (
@@ -29,7 +29,14 @@ CREATE TABLE `datakitab_bukhari` (
   `kitab_indonesia` varchar(255) DEFAULT NULL,
   `kitab_arab` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_kitab`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `hadits_status`;
+CREATE TABLE `hadits_status`(
+	`id_status` INT NOT NULL,
+	`status` VARCHAR(255),
+	PRIMARY KEY(`id_status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `perawi_bukhari`;
 CREATE TABLE `perawi_bukhari` (
@@ -37,7 +44,7 @@ CREATE TABLE `perawi_bukhari` (
   `no_hdt` int(6) NOT NULL,
   `kode_rawi` int(6) NOT NULL,
   PRIMARY KEY (`no_urut`,`no_hdt`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `perawi_daftar`;
 CREATE TABLE `perawi_daftar` (
@@ -61,7 +68,14 @@ CREATE TABLE `perawi_daftar` (
   `malik` int(4) NOT NULL,
   `darimi` int(4) NOT NULL,
   PRIMARY KEY (`kode_rawi`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `perawi_kalangan`;
+CREATE TABLE `perawi_kalangan`(
+	`id_kalangan` INT NOT NULL, 
+	`kalangan` varchar(255), 
+	PRIMARY KEY(`id_kalangan`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `sanad_bukhari`;
 CREATE TABLE `sanad_bukhari` (
@@ -77,9 +91,23 @@ CREATE TABLE `sanad_bukhari` (
   `j8` int(6) NOT NULL,
   `j9` int(6) NOT NULL,
   `j10` int(6) NOT NULL,
-  `skema` varchar(30) NOT NULL,
-  `kedudukan` varchar(40) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `id_skema` INT(2) NOT NULL,
+  `id_kedudukan` INT(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `sanad_skema`;
+CREATE TABLE `sanad_skema`(
+	`id_skema` INT(2) NOT NULL, 
+	`skema` varchar(30), 
+	PRIMARY KEY(`id_skema`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `sanad_kedudukan`;
+CREATE TABLE `sanad_kedudukan`(
+	`id_kedudukan` INT(2) NOT NULL, 
+	`kedudukan` varchar(40), 
+	PRIMARY KEY(`id_kedudukan`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `tema_bukhari`;
 CREATE TABLE `tema_bukhari` (
@@ -90,4 +118,4 @@ CREATE TABLE `tema_bukhari` (
   `id_bab` int(11) DEFAULT NULL,
   PRIMARY KEY (`no_hdt`),
   KEY `id_kitab_id_bab` (`id_kitab`,`id_bab`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

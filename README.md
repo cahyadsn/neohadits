@@ -124,6 +124,15 @@ It maps parameters into `$_ENV` and `getenv()` functions and falls back to stand
 ## 🕒 Changelog
 All notable changes to the **NeoHadits** codebase are documented below:
 
+### [1.0.3] - 2026-08-31
+
+#### Security Hardening & Performance Optimization
+- **Secured SQL Queries**: Implemented MySQLi prepared statements in `inc/neohadits_ajax.php` to prevent SQL Injection on user inputs.
+- **Cross-Site Scripting (XSS) Mitigation**: Added output escaping via `htmlspecialchars()` and restricted the theme selection parameters to a whitelisted set of presets to prevent session-poisoning DOM XSS.
+- **Optimized Queries**: Removed redundant self-joins in the primary database query on both the dashboard and search endpoints.
+- **Fixed AJAX View**: Fixed a broken AJAX database reference by migrating target tables from `hadits_bukhari` to `tema_bukhari`.
+- **Database Engine Migration**: Upgraded default table engines from `MyISAM` to `InnoDB` in `db/ddl_neohadist.sql` for modern transaction support, recovery, and reliability.
+
 ### [1.0.2] - 2026-08-19
 
 #### Database Source & Schema Refactoring

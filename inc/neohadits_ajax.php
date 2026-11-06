@@ -81,7 +81,11 @@ if(isset($_POST['n']) && !empty($_POST['n'])){
 	if(isset($_POST['q']) && !empty($_POST['q'])){
 		$sql .= " AND b.tema_indonesia LIKE ?";
 		$types .= "s";
-		$params[] = "%" . $_POST['q'] . "%";
+		$query_raw = trim($_POST['q']);
+		if (mb_strlen($query_raw, 'UTF-8') > 100) {
+			$query_raw = mb_substr($query_raw, 0, 100, 'UTF-8');
+		}
+		$params[] = "%" . $query_raw . "%";
 	}
 	
 	$sql .= " LIMIT ?, ?";

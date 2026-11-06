@@ -210,7 +210,7 @@ if (!in_array($c, $allowed_colors, true)) {
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="query">Cari Kata</label>
-                        <input type='text' class='form-input' id='query' placeholder="Ketik kata kunci pencarian...">
+                        <input type='text' class='form-input' id='query' maxlength="100" placeholder="Ketik kata kunci pencarian...">
                     </div>
                     
                     <!-- Search Results inside modal body -->

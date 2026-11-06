@@ -21,6 +21,7 @@ Welcome to **NeoHadits**, a modern, fast, and responsive Hadith collection porta
 - **Dynamic Client-Side Theme Engine**: Switch theme accent colors instantly. The choices are saved into user sessions and applied via CSS custom properties (`--accent-color`) without reload-lag.
 - **Zero-Dependency Vanilla JavaScript**: Fully migrated from jQuery to modern ES6+ JS (`fetch` requests, custom animations, and clean modular event loops).
 - **Secure Configuration**: Environment variables loaded dynamically via local `.env` configuration (safely excluded from git tracking).
+- **Hardened Security & Input Bounds**: Prepared statements for all SQL operations, XSS sanitization (`htmlspecialchars`), session preset whitelisting, and multi-byte safe query length bounds (capped at 100 characters) preventing memory exhaustion and injection attacks.
 
 ---
 
@@ -32,7 +33,8 @@ neohadits/
 │   ├── neohadits.css          # Glassmorphic UI styles, variables, transitions
 │   └── font-awesome.min.css   # Icon framework
 ├── db/
-│   ├── ddl_neohadist.sql      # Schema definitions (CREATE TABLE statements)
+│   ├── ddl_neohadist.sql      # Schema definitions (CREATE TABLE statements with InnoDB)
+│   ├── erd_neohadist.dbml     # Database ERD schema model in DBML format
 │   └── *.sql                  # Individual datasets for tables (data-only inserts)
 ├── fonts/                     # Local asset font-face resources
 ├── img/                       # UI graphic assets and preload svg indicator
@@ -55,8 +57,9 @@ neohadits/
 ## 🗄️ Database Structure
 
 The project separates the raw relational structure from the database contents:
-- **Core Schema**: [**`db/ddl_neohadist.sql`**](/db/ddl_neohadist.sql) contains the table definitions, relationships, and structure layout.
-- **Split Table Datasets**: The `db/` folder contains individual table data inserts (e.g. [`db/biografi_imam.sql`](/db/biografi_imam.sql), [`db/tema_bukhari.sql`](/db/tema_bukhari.sql), etc.) stripped of schemas for modular imports.
+- **Core Schema**: [**`db/ddl_neohadist.sql`**](/db/ddl_neohadist.sql) contains the table definitions (migrated to modern `InnoDB` storage engine), relationships, and structure layout.
+- **Schema Diagram**: [**`db/erd_neohadist.dbml`**](/db/erd_neohadist.dbml) provides the Entity-Relationship Diagram (ERD) written in DBML (Database Markup Language).
+- **Split Table Datasets**: The `db/` folder contains individual table data inserts (e.g. [`db/biografi_imam.sql`](/db/biografi_imam.sql), [`db/tema_bukhari.sql`](/db/tema_bukhari.sql), [`db/hadits_status.sql`](/db/hadits_status.sql), [`db/sanad_kedudukan.sql`](/db/sanad_kedudukan.sql), [`db/sanad_skema.sql`](/db/sanad_skema.sql), etc.) stripped of schemas for modular imports.
 - **Full Database Dump**: The git-ignored [`src/neohadits.v1.zip`](/src/neohadits.v1.zip) contains the compressed full database dump (`neohadits.v1.sql`), including both schema definitions and the complete dataset.
 
 ### Initializing the Database
@@ -80,8 +83,8 @@ The project separates the raw relational structure from the database contents:
 ## 🚀 Installation and Setup
 
 ### Prerequisites
-- PHP 7.4 or later
-- MySQL 5.7 / MariaDB 10.3 or later
+- PHP 7.4 or later (PHP 8.3.36+ recommended for CVE-2026-109618 / CVE-2026-109619 security remediation)
+- MySQL 5.7 / MariaDB 10.3 or later (InnoDB support)
 - Local PHP Web Server environment (e.g., Laragon, XAMPP, or Docker)
 
 ### Setup Steps
@@ -123,6 +126,14 @@ It maps parameters into `$_ENV` and `getenv()` functions and falls back to stand
 
 ## 🕒 Changelog
 All notable changes to the **NeoHadits** codebase are documented below:
+
+### [1.0.4] - 2026-11-06
+
+#### Security Hardening & Input Bounds (CVE-2026 Remediation)
+- **Bounded Search Input Length**: Added multi-byte safe string bounds (`mb_strlen` and `mb_substr` capped at 100 characters) on `$_POST['q']` in `inc/neohadits_ajax.php` to defend against memory exhaustion and OOM attack vectors (CVE-2026-109618).
+- **Client-Side Input Constraint**: Added `maxlength="100"` attribute to the `#query` search input in `index.php`.
+- **Runtime Environment Guidance**: Updated server prerequisites to recommend PHP 8.3.36+ to protect against PHP engine memory exhaustion and use-after-free vulnerabilities (CVE-2026-109618 and CVE-2026-109619).
+- **Repository Maintenance**: Updated `.gitignore` to exclude local `conductor/` workflow directory.
 
 ### [1.0.3] - 2026-08-31
 
